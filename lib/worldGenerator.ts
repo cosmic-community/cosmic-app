@@ -79,12 +79,11 @@ export class WorldGenerator implements TerrainGenerator {
   }
 
   private setBlock(blocks: string[][][], x: number, y: number, z: number, blockType: string): void {
-    // Guaranteed safe block setter with bounds checking and proper validation
+    // Guaranteed safe block setter with bounds checking
     if (x >= 0 && x < this.chunkSize && 
         y >= 0 && y < this.worldHeight && 
         z >= 0 && z < this.chunkSize) {
-      
-      // FIX for TS2532 - Use proper validation instead of non-null assertions
+      // FIX for TS2532: Add null safety checks for array access - line 74
       const xArray = blocks[x]
       if (xArray) {
         const yArray = xArray[y]
