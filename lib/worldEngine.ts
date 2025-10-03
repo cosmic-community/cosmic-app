@@ -156,7 +156,7 @@ export class GameWorldEngine implements WorldEngine {
         return true // Edge blocks are visible
       }
 
-      // Check if adjacent block is air - FIX for TS2532
+      // FIX for TS2532 - Use optional chaining for safe array access - line 116
       const adjacentBlock = chunk.blocks[nx]?.[ny]?.[nz]
       if (adjacentBlock === 'air' || adjacentBlock === undefined) {
         return true
@@ -181,7 +181,7 @@ export class GameWorldEngine implements WorldEngine {
       return null
     }
 
-    // FIX for TS2532 - Use optional chaining for safe array access
+    // Use optional chaining for safe array access
     return chunk.blocks[localX]?.[y]?.[localZ] || null
   }
 
@@ -200,7 +200,7 @@ export class GameWorldEngine implements WorldEngine {
       return false
     }
 
-    // FIX for TS2532 - Use optional chaining and ensure array exists before assignment
+    // Use optional chaining and ensure array exists before assignment
     const blockRow = chunk.blocks[localX]
     if (!blockRow) return false
     

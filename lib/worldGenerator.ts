@@ -88,7 +88,7 @@ export class WorldGenerator implements TerrainGenerator {
         
         // Fill from bedrock up to terrain height
         for (let y = 0; y <= height; y++) {
-          // FIX: Add proper null checks for array access - line 74 and 76
+          // FIX: Add proper null checks for array access - lines 74 and 76
           const blockRow = blocks[x]
           if (blockRow && blockRow[y]) {
             if (y === 0) {
@@ -110,7 +110,7 @@ export class WorldGenerator implements TerrainGenerator {
           const treeHeight = 4 + Math.floor(this.noise(worldX + worldZ, worldZ + worldX) * 3)
           for (let y = height + 1; y <= height + treeHeight; y++) {
             if (y < this.worldHeight) {
-              // FIX: Add proper null checks for tree placement array access
+              // FIX: Add proper null checks for tree placement array access - lines 95, 97, 99, 101, 103
               const blockRow = blocks[x]
               if (blockRow && blockRow[y]) {
                 blockRow[y][z] = 'wood'
