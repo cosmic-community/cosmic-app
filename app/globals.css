@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+}
+
+@layer components {
+  .game-container {
+    @apply bg-gray-900 text-white min-h-screen;
+  }
+  
+  .block-texture {
+    @apply w-8 h-8 bg-gradient-to-br border border-gray-600 rounded-sm;
+  }
+  
+  .grass-block {
+    @apply from-green-400 to-green-600;
+  }
+  
+  .wood-block {
+    @apply from-yellow-600 to-yellow-800;
+  }
+  
+  .stone-block {
+    @apply from-gray-400 to-gray-600;
+  }
+  
+  .cobblestone-block {
+    @apply from-gray-500 to-gray-700;
+  }
+}
