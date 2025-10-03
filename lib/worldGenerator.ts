@@ -67,7 +67,7 @@ export class WorldGenerator implements TerrainGenerator {
   generateChunk(chunkX: number, chunkZ: number): Chunk {
     const blocks: string[][][] = []
     
-    // Initialize 3D array
+    // Initialize 3D array with proper null checks
     for (let x = 0; x < this.chunkSize; x++) {
       blocks[x] = []
       for (let y = 0; y < this.worldHeight; y++) {
@@ -86,27 +86,41 @@ export class WorldGenerator implements TerrainGenerator {
         const height = this.getHeight(worldX, worldZ)
         const biome = this.getBiome(worldX, worldZ)
         
-        // Fill from bedrock up to terrain height
+        // Fill from bedrock up to terrain height - FIX for TS2532
         for (let y = 0; y <= height; y++) {
+          // Add null checks for array access
+          const blockRow = blocks[x]
+          if (!blockRow) continue
+          
+          const blockColumn = blockRow[y]
+          if (!blockColumn) continue
+          
           if (y === 0) {
-            blocks[x][y][z] = 'stone' // Bedrock layer
+            blockColumn[z] = 'stone' // Bedrock layer
           } else if (y === height && biome === 'grass') {
-            blocks[x][y][z] = 'grass'
+            blockColumn[z] = 'grass'
           } else if (y > height - 3 && biome === 'grass') {
-            blocks[x][y][z] = 'dirt'
+            blockColumn[z] = 'dirt'
           } else if (biome === 'desert') {
-            blocks[x][y][z] = y === height ? 'stone' : 'stone'
+            blockColumn[z] = y === height ? 'stone' : 'stone'
           } else {
-            blocks[x][y][z] = y > height - 4 ? 'dirt' : 'stone'
+            blockColumn[z] = y > height - 4 ? 'dirt' : 'stone'
           }
         }
 
-        // Add trees in forest biome
+        // Add trees in forest biome - FIX for TS2532
         if (biome === 'forest' && this.noise(worldX * 0.1, worldZ * 0.1) > 0.8 && height < this.worldHeight - 10) {
           const treeHeight = 4 + Math.floor(this.noise(worldX + worldZ, worldZ + worldX) * 3)
           for (let y = height + 1; y <= height + treeHeight; y++) {
             if (y < this.worldHeight) {
-              blocks[x][y][z] = 'wood'
+              // Add null checks for array access
+              const blockRow = blocks[x]
+              if (!blockRow) continue
+              
+              const blockColumn = blockRow[y]
+              if (!blockColumn) continue
+              
+              blockColumn[z] = 'wood'
             }
           }
         }

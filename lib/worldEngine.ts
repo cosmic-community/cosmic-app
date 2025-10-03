@@ -156,8 +156,9 @@ export class GameWorldEngine implements WorldEngine {
         return true // Edge blocks are visible
       }
 
-      // Check if adjacent block is air
-      if (chunk.blocks[nx][ny][nz] === 'air') {
+      // Check if adjacent block is air - FIX for TS2532
+      const adjacentBlock = chunk.blocks[nx]?.[ny]?.[nz]
+      if (adjacentBlock === 'air') {
         return true
       }
     }
@@ -180,7 +181,14 @@ export class GameWorldEngine implements WorldEngine {
       return null
     }
 
-    return chunk.blocks[localX][y][localZ]
+    // FIX for TS2532 - Add proper null checks
+    const blockRow = chunk.blocks[localX]
+    if (!blockRow) return null
+    
+    const blockColumn = blockRow[y]
+    if (!blockColumn) return null
+    
+    return blockColumn[localZ] || null
   }
 
   setBlockAt(x: number, y: number, z: number, blockType: string): boolean {
@@ -198,7 +206,14 @@ export class GameWorldEngine implements WorldEngine {
       return false
     }
 
-    chunk.blocks[localX][y][localZ] = blockType
+    // FIX for TS2532 and TS2322 - Add proper null checks and type handling
+    const blockRow = chunk.blocks[localX]
+    if (!blockRow) return false
+    
+    const blockColumn = blockRow[y]
+    if (!blockColumn) return false
+    
+    blockColumn[localZ] = blockType
     return true
   }
 

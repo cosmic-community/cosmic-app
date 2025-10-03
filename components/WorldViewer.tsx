@@ -158,7 +158,7 @@ export default function WorldViewer({
     }
   }
 
-  // Movement logic
+  // Movement logic - Fixed Set iteration issue
   const updateMovement = useCallback(() => {
     if (!engineRef.current) return
 
@@ -168,32 +168,35 @@ export default function WorldViewer({
     setCamera(prev => {
       let newCamera = { ...prev }
       
+      // Convert Set to Array for proper iteration - FIX for TS2802
+      const keyArray = Array.from(keys)
+      
       // Forward/backward
-      if (keys.has('KeyW')) {
+      if (keyArray.includes('KeyW')) {
         newCamera.x += Math.sin(prev.yaw) * speed
         newCamera.z += Math.cos(prev.yaw) * speed
       }
-      if (keys.has('KeyS')) {
+      if (keyArray.includes('KeyS')) {
         newCamera.x -= Math.sin(prev.yaw) * speed
         newCamera.z -= Math.cos(prev.yaw) * speed
       }
       
       // Strafe left/right
-      if (keys.has('KeyA')) {
+      if (keyArray.includes('KeyA')) {
         newCamera.x += Math.sin(prev.yaw - Math.PI/2) * speed
         newCamera.z += Math.cos(prev.yaw - Math.PI/2) * speed
       }
-      if (keys.has('KeyD')) {
+      if (keyArray.includes('KeyD')) {
         newCamera.x += Math.sin(prev.yaw + Math.PI/2) * speed
         newCamera.z += Math.cos(prev.yaw + Math.PI/2) * speed
       }
       
       // Vertical movement (creative mode)
       if (gameMode === 'creative') {
-        if (keys.has('Space')) {
+        if (keyArray.includes('Space')) {
           newCamera.y += flySpeed
         }
-        if (keys.has('ShiftLeft')) {
+        if (keyArray.includes('ShiftLeft')) {
           newCamera.y -= flySpeed
         }
       }
