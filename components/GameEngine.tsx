@@ -16,10 +16,10 @@ export default function GameEngine({ blockTypes, worlds, players }: GameEnginePr
 
   useEffect(() => {
     dispatch({ type: 'SET_BLOCK_TYPES', payload: blockTypes })
-    if (players.length > 0) {
+    if (players.length > 0 && players[0]) {
       dispatch({ type: 'SET_PLAYER', payload: players[0] })
     }
-    if (worlds.length > 0) {
+    if (worlds.length > 0 && worlds[0]) {
       dispatch({ type: 'SET_WORLD', payload: worlds[0] })
     }
   }, [blockTypes, worlds, players])
