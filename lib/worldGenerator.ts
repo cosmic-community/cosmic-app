@@ -83,11 +83,11 @@ export class WorldGenerator implements TerrainGenerator {
     if (x >= 0 && x < this.chunkSize && 
         y >= 0 && y < this.worldHeight && 
         z >= 0 && z < this.chunkSize) {
-      // FIX for TS2532: Add null safety checks for array access - line 74
+      // FIX for TS2532: Add comprehensive null safety checks for array access
       const xArray = blocks[x]
-      if (xArray) {
+      if (xArray && Array.isArray(xArray)) {
         const yArray = xArray[y]
-        if (yArray) {
+        if (yArray && Array.isArray(yArray)) {
           yArray[z] = blockType
         }
       }
