@@ -67,7 +67,7 @@ export class WorldGenerator implements TerrainGenerator {
   generateChunk(chunkX: number, chunkZ: number): Chunk {
     const blocks: string[][][] = []
     
-    // Initialize 3D array with proper null checks
+    // Initialize 3D array
     for (let x = 0; x < this.chunkSize; x++) {
       blocks[x] = []
       for (let y = 0; y < this.worldHeight; y++) {
@@ -86,41 +86,35 @@ export class WorldGenerator implements TerrainGenerator {
         const height = this.getHeight(worldX, worldZ)
         const biome = this.getBiome(worldX, worldZ)
         
-        // Fill from bedrock up to terrain height - FIX for TS2532
+        // Fill from bedrock up to terrain height
         for (let y = 0; y <= height; y++) {
-          // Add null checks for array access
+          // FIX: Add proper null checks for array access - line 74 and 76
           const blockRow = blocks[x]
-          if (!blockRow) continue
-          
-          const blockColumn = blockRow[y]
-          if (!blockColumn) continue
-          
-          if (y === 0) {
-            blockColumn[z] = 'stone' // Bedrock layer
-          } else if (y === height && biome === 'grass') {
-            blockColumn[z] = 'grass'
-          } else if (y > height - 3 && biome === 'grass') {
-            blockColumn[z] = 'dirt'
-          } else if (biome === 'desert') {
-            blockColumn[z] = y === height ? 'stone' : 'stone'
-          } else {
-            blockColumn[z] = y > height - 4 ? 'dirt' : 'stone'
+          if (blockRow && blockRow[y]) {
+            if (y === 0) {
+              blockRow[y][z] = 'stone' // Bedrock layer
+            } else if (y === height && biome === 'grass') {
+              blockRow[y][z] = 'grass'
+            } else if (y > height - 3 && biome === 'grass') {
+              blockRow[y][z] = 'dirt'
+            } else if (biome === 'desert') {
+              blockRow[y][z] = y === height ? 'stone' : 'stone'
+            } else {
+              blockRow[y][z] = y > height - 4 ? 'dirt' : 'stone'
+            }
           }
         }
 
-        // Add trees in forest biome - FIX for TS2532
+        // Add trees in forest biome
         if (biome === 'forest' && this.noise(worldX * 0.1, worldZ * 0.1) > 0.8 && height < this.worldHeight - 10) {
           const treeHeight = 4 + Math.floor(this.noise(worldX + worldZ, worldZ + worldX) * 3)
           for (let y = height + 1; y <= height + treeHeight; y++) {
             if (y < this.worldHeight) {
-              // Add null checks for array access - FIX for TS2532
+              // FIX: Add proper null checks for tree placement array access
               const blockRow = blocks[x]
-              if (!blockRow) continue
-              
-              const blockColumn = blockRow[y]
-              if (!blockColumn) continue
-              
-              blockColumn[z] = 'wood'
+              if (blockRow && blockRow[y]) {
+                blockRow[y][z] = 'wood'
+              }
             }
           }
         }
