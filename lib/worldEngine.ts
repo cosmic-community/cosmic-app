@@ -114,7 +114,7 @@ export class GameWorldEngine implements WorldEngine {
                 worldY >= minY && worldY <= maxY &&
                 worldZ >= minZ && worldZ <= maxZ) {
               
-              const blockType = chunk.blocks[x][y][z]
+              const blockType = chunk.blocks[x]?.[y]?.[z]
               if (blockType && blockType !== 'air') {
                 const isVisible = this.isBlockVisible(chunk, x, y, z)
                 
@@ -158,7 +158,7 @@ export class GameWorldEngine implements WorldEngine {
 
       // Check if adjacent block is air - FIX for TS2532
       const adjacentBlock = chunk.blocks[nx]?.[ny]?.[nz]
-      if (adjacentBlock === 'air') {
+      if (adjacentBlock === 'air' || adjacentBlock === undefined) {
         return true
       }
     }
@@ -181,14 +181,8 @@ export class GameWorldEngine implements WorldEngine {
       return null
     }
 
-    // FIX for TS2532 - Add proper null checks
-    const blockRow = chunk.blocks[localX]
-    if (!blockRow) return null
-    
-    const blockColumn = blockRow[y]
-    if (!blockColumn) return null
-    
-    return blockColumn[localZ] || null
+    // FIX for TS2532 - Use optional chaining for safe array access
+    return chunk.blocks[localX]?.[y]?.[localZ] || null
   }
 
   setBlockAt(x: number, y: number, z: number, blockType: string): boolean {
@@ -206,7 +200,7 @@ export class GameWorldEngine implements WorldEngine {
       return false
     }
 
-    // FIX for TS2532 and TS2322 - Add proper null checks and type handling
+    // FIX for TS2532 - Use optional chaining and ensure array exists before assignment
     const blockRow = chunk.blocks[localX]
     if (!blockRow) return false
     

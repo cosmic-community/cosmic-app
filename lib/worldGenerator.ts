@@ -113,7 +113,7 @@ export class WorldGenerator implements TerrainGenerator {
           const treeHeight = 4 + Math.floor(this.noise(worldX + worldZ, worldZ + worldX) * 3)
           for (let y = height + 1; y <= height + treeHeight; y++) {
             if (y < this.worldHeight) {
-              // Add null checks for array access
+              // Add null checks for array access - FIX for TS2532
               const blockRow = blocks[x]
               if (!blockRow) continue
               
