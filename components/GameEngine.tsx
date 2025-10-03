@@ -3,6 +3,7 @@
 import { useState, useReducer, useEffect } from 'react'
 import { BlockType, World, Player } from '@/lib/cosmic'
 import { gameReducer, initialGameState, getBlockTexture } from '@/lib/gameState'
+import WorldViewer from './WorldViewer'
 
 interface GameEngineProps {
   blockTypes: BlockType[]
@@ -12,7 +13,7 @@ interface GameEngineProps {
 
 export default function GameEngine({ blockTypes, worlds, players }: GameEngineProps) {
   const [gameState, dispatch] = useReducer(gameReducer, initialGameState)
-  const [activeTab, setActiveTab] = useState<'blocks' | 'worlds' | 'players'>('blocks')
+  const [activeTab, setActiveTab] = useState<'explore' | 'blocks' | 'worlds' | 'players'>('explore')
 
   useEffect(() => {
     dispatch({ type: 'SET_BLOCK_TYPES', payload: blockTypes })
@@ -34,6 +35,30 @@ export default function GameEngine({ blockTypes, worlds, players }: GameEnginePr
 
   const handlePlayerSelect = (player: Player) => {
     dispatch({ type: 'SET_PLAYER', payload: player })
+  }
+
+  const handlePlayerMove = (x: number, y: number, z: number) => {
+    // Update player position in game state
+    if (gameState.currentPlayer) {
+      const updatedPlayer: Player = {
+        ...gameState.currentPlayer,
+        metadata: {
+          ...gameState.currentPlayer.metadata!,
+          position: { x, y, z }
+        }
+      }
+      dispatch({ type: 'SET_PLAYER', payload: updatedPlayer })
+    }
+  }
+
+  const handleBlockPlace = (x: number, y: number, z: number, blockType: string) => {
+    console.log(`Placed ${blockType} at ${x}, ${y}, ${z}`)
+    // Here you could update the world state in Cosmic CMS
+  }
+
+  const handleBlockBreak = (x: number, y: number, z: number) => {
+    console.log(`Broke block at ${x}, ${y}, ${z}`)
+    // Here you could update the world state in Cosmic CMS
   }
 
   return (
@@ -66,7 +91,7 @@ export default function GameEngine({ blockTypes, worlds, players }: GameEnginePr
 
       {/* Tabs */}
       <div className="flex space-x-1 mb-6">
-        {(['blocks', 'worlds', 'players'] as const).map((tab) => (
+        {(['explore', 'blocks', 'worlds', 'players'] as const).map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -82,7 +107,22 @@ export default function GameEngine({ blockTypes, worlds, players }: GameEnginePr
       </div>
 
       {/* Tab Content */}
-      <div className="min-h-[300px]">
+      <div className="min-h-[600px]">
+        {activeTab === 'explore' && (
+          <div>
+            <h3 className="text-lg font-semibold mb-4">World Explorer</h3>
+            <WorldViewer
+              world={gameState.currentWorld}
+              player={gameState.currentPlayer}
+              blockTypes={blockTypes}
+              selectedBlock={gameState.selectedBlock}
+              onPlayerMove={handlePlayerMove}
+              onBlockPlace={handleBlockPlace}
+              onBlockBreak={handleBlockBreak}
+            />
+          </div>
+        )}
+
         {activeTab === 'blocks' && (
           <div>
             <h3 className="text-lg font-semibold mb-4">Block Inventory</h3>

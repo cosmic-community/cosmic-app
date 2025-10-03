@@ -2,34 +2,125 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  html {
-    font-family: system-ui, -apple-system, sans-serif;
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
   }
 }
 
-@layer components {
-  .game-container {
-    @apply bg-gray-900 text-white min-h-screen;
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+  background-color: #0f1419;
+}
+
+/* Block textures for the game */
+.block-texture {
+  @apply w-12 h-12 rounded border border-gray-600 transition-all;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.grass-block {
+  background: linear-gradient(180deg, #4CAF50 0%, #4CAF50 30%, #8D6E63 30%, #8D6E63 100%);
+}
+
+.wood-block {
+  background: linear-gradient(90deg, #8D6E63 0%, #A0845C 25%, #8D6E63 50%, #A0845C 75%, #8D6E63 100%);
+}
+
+.stone-block {
+  background: linear-gradient(45deg, #9E9E9E 25%, #BDBDBD 25%, #BDBDBD 50%, #9E9E9E 50%, #9E9E9E 75%, #BDBDBD 75%);
+}
+
+.cobblestone-block {
+  background: linear-gradient(45deg, #616161 20%, #757575 20%, #757575 40%, #616161 40%, #616161 60%, #757575 60%, #757575 80%, #616161 80%);
+}
+
+.dirt-block {
+  background: radial-gradient(circle at 30% 30%, #A0845C 20%, #8D6E63 40%, #795548 80%);
+}
+
+/* Canvas styling */
+canvas {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+/* Hide scrollbars but keep functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Game UI enhancements */
+.game-ui-panel {
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Animation for block selection */
+.block-selected {
+  animation: glow 1s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from {
+    box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
   }
-  
-  .block-texture {
-    @apply w-8 h-8 bg-gradient-to-br border border-gray-600 rounded-sm;
+  to {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.8);
   }
-  
-  .grass-block {
-    @apply from-green-400 to-green-600;
-  }
-  
-  .wood-block {
-    @apply from-yellow-600 to-yellow-800;
-  }
-  
-  .stone-block {
-    @apply from-gray-400 to-gray-600;
-  }
-  
-  .cobblestone-block {
-    @apply from-gray-500 to-gray-700;
-  }
+}
+
+/* Crosshair enhancement */
+.crosshair {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  pointer-events: none;
+}
+
+.crosshair::before,
+.crosshair::after {
+  content: '';
+  position: absolute;
+  background: white;
+}
+
+.crosshair::before {
+  width: 20px;
+  height: 2px;
+  top: 9px;
+  left: 0;
+}
+
+.crosshair::after {
+  width: 2px;
+  height: 20px;
+  top: 0;
+  left: 9px;
 }
