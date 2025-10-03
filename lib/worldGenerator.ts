@@ -90,17 +90,20 @@ export class WorldGenerator implements TerrainGenerator {
         for (let y = 0; y <= height; y++) {
           // FIX: Add proper null checks for array access - lines 74 and 76
           const blockRow = blocks[x]
-          if (blockRow && blockRow[y]) {
-            if (y === 0) {
-              blockRow[y][z] = 'stone' // Bedrock layer
-            } else if (y === height && biome === 'grass') {
-              blockRow[y][z] = 'grass'
-            } else if (y > height - 3 && biome === 'grass') {
-              blockRow[y][z] = 'dirt'
-            } else if (biome === 'desert') {
-              blockRow[y][z] = y === height ? 'stone' : 'stone'
-            } else {
-              blockRow[y][z] = y > height - 4 ? 'dirt' : 'stone'
+          if (blockRow) {
+            const blockColumn = blockRow[y]
+            if (blockColumn) {
+              if (y === 0) {
+                blockColumn[z] = 'stone' // Bedrock layer
+              } else if (y === height && biome === 'grass') {
+                blockColumn[z] = 'grass'
+              } else if (y > height - 3 && biome === 'grass') {
+                blockColumn[z] = 'dirt'
+              } else if (biome === 'desert') {
+                blockColumn[z] = y === height ? 'stone' : 'stone'
+              } else {
+                blockColumn[z] = y > height - 4 ? 'dirt' : 'stone'
+              }
             }
           }
         }
@@ -112,8 +115,11 @@ export class WorldGenerator implements TerrainGenerator {
             if (y < this.worldHeight) {
               // FIX: Add proper null checks for tree placement array access - lines 95, 97, 99, 101, 103
               const blockRow = blocks[x]
-              if (blockRow && blockRow[y]) {
-                blockRow[y][z] = 'wood'
+              if (blockRow) {
+                const blockColumn = blockRow[y]
+                if (blockColumn) {
+                  blockColumn[z] = 'wood'
+                }
               }
             }
           }
