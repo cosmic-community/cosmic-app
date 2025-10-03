@@ -125,7 +125,7 @@ export class WorldGenerator implements TerrainGenerator {
           this.setBlock(blocks, x, y, z, blockType)
         }
 
-        // Add trees in forest biome - FIX for TS2532: Use safe setBlock method instead of direct array access
+        // Add trees in forest biome - FIXED: Use safe setBlock method instead of direct array access
         if (biome === 'forest' && this.noise(worldX * 0.1, worldZ * 0.1) > 0.8 && height < this.worldHeight - 10) {
           const treeHeight = 4 + Math.floor(this.noise(worldX + worldZ, worldZ + worldX) * 3)
           for (let y = height + 1; y <= height + treeHeight; y++) {
