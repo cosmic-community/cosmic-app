@@ -64,19 +64,33 @@ export class WorldGenerator implements TerrainGenerator {
     return 'grass'
   }
 
-  generateChunk(chunkX: number, chunkZ: number): Chunk {
-    const blocks: string[][][] = []
+  private initializeBlocks(): string[][][] {
+    // Create a properly initialized 3D array with guaranteed structure
+    const blocks: string[][][] = Array(this.chunkSize)
     
-    // Initialize 3D array
     for (let x = 0; x < this.chunkSize; x++) {
-      blocks[x] = []
+      blocks[x] = Array(this.worldHeight)
       for (let y = 0; y < this.worldHeight; y++) {
-        blocks[x][y] = []
-        for (let z = 0; z < this.chunkSize; z++) {
-          blocks[x][y][z] = 'air'
-        }
+        blocks[x][y] = Array(this.chunkSize).fill('air')
       }
     }
+    
+    return blocks
+  }
+
+  private setBlock(blocks: string[][][], x: number, y: number, z: number, blockType: string): void {
+    // Guaranteed safe block setter with bounds checking
+    if (x >= 0 && x < this.chunkSize && 
+        y >= 0 && y < this.worldHeight && 
+        z >= 0 && z < this.chunkSize) {
+      // TypeScript now knows these arrays exist because of initializeBlocks()
+      blocks[x]![y]![z] = blockType
+    }
+  }
+
+  generateChunk(chunkX: number, chunkZ: number): Chunk {
+    // Use the safe initialization method
+    const blocks = this.initializeBlocks()
 
     // Generate terrain
     for (let x = 0; x < this.chunkSize; x++) {
@@ -86,26 +100,23 @@ export class WorldGenerator implements TerrainGenerator {
         const height = this.getHeight(worldX, worldZ)
         const biome = this.getBiome(worldX, worldZ)
         
-        // Fill from bedrock up to terrain height
+        // Fill from bedrock up to terrain height using safe setter
         for (let y = 0; y <= height; y++) {
-          // FIX: Add proper null checks for array access - resolves TS2532 errors
-          const blockRow = blocks[x]
-          if (!blockRow) continue
-          
-          const blockColumn = blockRow[y]
-          if (!blockColumn) continue
+          let blockType: string
           
           if (y === 0) {
-            blockColumn[z] = 'stone' // Bedrock layer
+            blockType = 'stone' // Bedrock layer
           } else if (y === height && biome === 'grass') {
-            blockColumn[z] = 'grass'
+            blockType = 'grass'
           } else if (y > height - 3 && biome === 'grass') {
-            blockColumn[z] = 'dirt'
+            blockType = 'dirt'
           } else if (biome === 'desert') {
-            blockColumn[z] = y === height ? 'stone' : 'stone'
+            blockType = y === height ? 'stone' : 'stone'
           } else {
-            blockColumn[z] = y > height - 4 ? 'dirt' : 'stone'
+            blockType = y > height - 4 ? 'dirt' : 'stone'
           }
+          
+          this.setBlock(blocks, x, y, z, blockType)
         }
 
         // Add trees in forest biome
@@ -113,14 +124,7 @@ export class WorldGenerator implements TerrainGenerator {
           const treeHeight = 4 + Math.floor(this.noise(worldX + worldZ, worldZ + worldX) * 3)
           for (let y = height + 1; y <= height + treeHeight; y++) {
             if (y < this.worldHeight) {
-              // FIX: Add proper null checks for tree placement array access
-              const blockRow = blocks[x]
-              if (!blockRow) continue
-              
-              const blockColumn = blockRow[y]
-              if (!blockColumn) continue
-              
-              blockColumn[z] = 'wood'
+              this.setBlock(blocks, x, y, z, 'wood')
             }
           }
         }
