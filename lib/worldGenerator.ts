@@ -83,7 +83,7 @@ export class WorldGenerator implements TerrainGenerator {
     if (x >= 0 && x < this.chunkSize && 
         y >= 0 && y < this.worldHeight && 
         z >= 0 && z < this.chunkSize) {
-      // FIX for TS2532: Add comprehensive null safety checks for array access
+      // Safe array access with null safety checks
       const xArray = blocks[x]
       if (xArray && Array.isArray(xArray)) {
         const yArray = xArray[y]
@@ -130,7 +130,7 @@ export class WorldGenerator implements TerrainGenerator {
           const treeHeight = 4 + Math.floor(this.noise(worldX + worldZ, worldZ + worldX) * 3)
           for (let y = height + 1; y <= height + treeHeight; y++) {
             if (y < this.worldHeight) {
-              // FIXED: Use the safe setBlock method instead of direct array access
+              // FIXED: Use the safe setBlock method instead of direct array access to prevent TS2532
               this.setBlock(blocks, x, y, z, 'wood')
             }
           }
